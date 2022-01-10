@@ -26,13 +26,13 @@ def seeNeighbors(grid, row, col):
     countOnes = 0
     for i in range(-1, 2, 1):
         for j in range(-1, 2, 1):
+            if i == 0 and j == 0:
+                continue
             try:
-                if i == 0 and j == 0:
-                    continue
                 if grid[row+i][col+j] == 1:
                     countOnes += 1
             except:
-                print("BORDER: " + str(col) + ", " + str(row))
+                print("BORDER: " + str(row) + ", " + str(col))
                 return BORDER
     if countOnes >= CA_NEIGHBORS:
         return 1
@@ -78,3 +78,4 @@ if __name__ == "__main__":
                 print("running iteration")
                 grid = CA(grid)
                 drawGrid(grid, screen)
+                time.sleep(0.5)
