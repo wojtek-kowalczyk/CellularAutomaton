@@ -3,19 +3,19 @@ import pygame
 from random import randrange
 
 # settings
-ROWS = 40
-COLS = 40
+ROWS = 50
+COLS = 50
 PPU = 16  # px per unit
-PRIMARY_COLOR = (255, 255, 255)
-SECONDART_COLOR = (0, 0, 0)
-BORDER = 1
+PRIMARY_COLOR = (255, 255, 255)  # 1 on grid - WHITE
+SECONDART_COLOR = (0, 0, 0)  # 0 on grid - BLACK
+BORDER = 0
 CA_NEIGHBORS = 4
 ITERATIONS = 1
 DELAY = 1
 
 
 def CA(grid):
-    newGrid = grid.copy()
+    newGrid = [row[:] for row in grid]
     for i in range(ROWS):
         for j in range(COLS):
             newGrid[i][j] = seeNeighbors(grid, i, j)
@@ -28,12 +28,10 @@ def seeNeighbors(grid, row, col):
         for j in range(-1, 2, 1):
             if i == 0 and j == 0:
                 continue
-            try:
-                if grid[row+i][col+j] == 1:
-                    countOnes += 1
-            except:
-                print("BORDER: " + str(row) + ", " + str(col))
+            if row+i < 0 or row+i >= ROWS or col+j < 0 or col+j >= COLS:
                 return BORDER
+            if grid[row+i][col+j] == 1:
+                countOnes += 1
     if countOnes >= CA_NEIGHBORS:
         return 1
     else:
@@ -47,7 +45,7 @@ def generateGrid():
 def drawGrid(grid, screen):
     for i in range(ROWS):
         for j in range(COLS):
-            color = PRIMARY_COLOR if grid[i][j] == 0 else SECONDART_COLOR
+            color = PRIMARY_COLOR if grid[i][j] == 1 else SECONDART_COLOR
             pygame.draw.rect(screen, color,
                              pygame.Rect(j*PPU, i*PPU, PPU, PPU))
     pygame.display.flip()
@@ -61,7 +59,6 @@ def printGrid(grid):
 
 
 if __name__ == "__main__":
-
     screen = pygame.display.set_mode((COLS*PPU, ROWS*PPU))
     screen.fill((150, 150, 150))
     pygame.display.set_caption("Cellular Automaton")
@@ -75,7 +72,6 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                print("running iteration")
                 grid = CA(grid)
                 drawGrid(grid, screen)
                 time.sleep(0.5)
