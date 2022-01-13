@@ -5,7 +5,7 @@ from random import randrange
 # settings
 ROWS = 50
 COLS = 50
-PPU = 16  # px per unit
+PPU = 8  # px per unit
 PRIMARY_COLOR = (255, 255, 255)  # 1 on grid - WHITE
 SECONDART_COLOR = (0, 0, 0)  # 0 on grid - BLACK
 ITERATIONS = 1
@@ -16,10 +16,12 @@ BLACK = 0
 CA_NEIGHBORS = 4  # set this to 4 for "become majority" behaviour
 PERCENT_FILL = 50  # 0-100
 FILL_WITH = WHITE  # intedned behaviour only for BLACK and WHITE (0 and 1)
-BORDER = BLACK  # BLACK -> gives caves | WHITE -> gives islands
-
+BORDER = WHITE  # BLACK -> gives caves | WHITE -> gives islands
+TILING = True  # if True -> BORDER has no effect
 
 # modify this to achieve different result.
+
+
 def rule(neighboringOnes, centerValue):
     """
     This function returns what the current cell must become dependant on it's neighbors
@@ -47,10 +49,14 @@ def seeNeighbors(grid, row, col):
         for j in range(-1, 2, 1):
             if i == 0 and j == 0:
                 continue
-            if row+i < 0 or row+i >= ROWS or col+j < 0 or col+j >= COLS:
-                return BORDER
-            if grid[row+i][col+j] == WHITE:
-                countWhites += 1
+            if TILING:
+                if grid[(row+i) % ROWS][(col+j) % COLS] == WHITE:
+                    countWhites += 1
+            else:
+                if row+i < 0 or row+i >= ROWS or col+j < 0 or col+j >= COLS:
+                    return BORDER
+                if grid[row+i][col+j] == WHITE:
+                    countWhites += 1
     return rule(countWhites, grid[row][col])
 
 
